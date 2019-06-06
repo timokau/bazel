@@ -44,7 +44,7 @@ public class PatchUtil {
   public enum Result {
     COMPLETE,  // The entire chunk is read
     CONTINUE,  // Should continue reading the chunk
-    ERROR,     // The chunk body doesn't match the chunk header's description
+    ERROR,     // The chunk body doesn't match the chunk header's size description
   }
 
   private static class ChunkHeader {
@@ -96,6 +96,11 @@ public class PatchUtil {
       return result;
     }
 
+    /**
+     * This function first tries to apply the Delta without any offset, if that fails, then
+     * it tries to apply the Delta with an offset, starting from 1, up to the total lines in
+     * the original content. For every offset, we try both forwards and backwards.
+     */
     private void applyTo(Delta<String> delta, List<String> result) throws PatchFailedException {
       PatchFailedException e = applyDelta(delta, result);
       if (e == null) {
@@ -104,11 +109,11 @@ public class PatchUtil {
 
       Chunk<String> original = delta.getOriginal();
       Chunk<String> revised = delta.getRevised();
-      int[] positive = {1, -1};
+      int[] direction = {1, -1};
       int maxOffset = result.size();
       for (int i = 1; i < maxOffset; i++) {
         for (int j = 0; j < 2; j++) {
-          int offset = i * positive[j];
+          int offset = i * direction[j];
           if (offset + original.getPosition() < 0 || offset + revised.getPosition() < 0) {
             continue;
           }
@@ -174,11 +179,11 @@ public class PatchUtil {
     return LineType.UNKNOWN;
   }
 
-  @VisibleForTesting
   /**
    * If file is not null and the file exists, return the file content as a list for String.
    * Otherwise, return an empty list.
    */
+  @VisibleForTesting
   public static List<String> readFile(Path file) throws IOException {
     List<String> content = new ArrayList<>();
     if (file != null && file.exists()) {
