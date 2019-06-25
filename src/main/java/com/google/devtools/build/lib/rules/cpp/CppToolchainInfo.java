@@ -487,6 +487,22 @@ public final class CppToolchainInfo {
       toolPathsCollector.put(tool.getFirst(), crosstoolTopPathFragment.getRelative(path));
     }
 
+    // export BAZEL_TOOLS_OVERRIDE="ar=/usr/bin/ar,gcc=/bin/gcc"
+    String systemOverrides = System.getenv("BAZEL_TOOLS_OVERRIDE");
+    systemOverrides = systemOverrides != null ? systemOverrides : "";
+    for (String override: systemOverrides.split(",")) {
+        String[] split = override.split("=");
+        if (split.length == 2) {
+            System.out.println("Overriding tool " + split[0] + " with " + split[1]);
+            String tool = split[0];
+            PathFragment path = PathFragment.create(split[1]);
+            toolPathsCollector.put(tool, crosstoolTopPathFragment.getRelative(path));
+        } else if (split.length > 0) {
+            System.out.println("Warning: Invalid BAZEL_TOOLS_OVERRIDE");
+        }
+    }
+	System.out.println("New map is: " + toolPathsCollector);
+
     if (toolPathsCollector.isEmpty()) {
       // If no paths are specified, we just use the names of the tools as the path.
       for (CppConfiguration.Tool tool : CppConfiguration.Tool.values()) {
@@ -525,6 +541,7 @@ public final class CppToolchainInfo {
 
   private static PathFragment getToolPathFragment(
       ImmutableMap<String, PathFragment> toolPaths, CppConfiguration.Tool tool) {
+    System.out.println("Getting " + tool.getNamePart() + ": " + toolPaths.get(tool.getNamePart()));
     return toolPaths.get(tool.getNamePart());
   }
 
