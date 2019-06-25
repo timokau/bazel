@@ -84,7 +84,7 @@ def _find_tool(repository_ctx, tool, overriden_tools):
     """Find a tool for repository, taking overriden tools into account."""
     if tool in overriden_tools:
         return overriden_tools[tool]
-    return which(repository_ctx, tool, "/usr/bin/" + tool)
+    return which(repository_ctx, tool, "/some/path/prefix/" + tool)
 
 def _get_tool_paths(repository_ctx, overriden_tools):
     """Compute the path to the various tools. Doesn't %-escape the result!"""

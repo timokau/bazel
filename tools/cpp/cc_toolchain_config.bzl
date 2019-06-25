@@ -1290,7 +1290,7 @@ def _impl(ctx):
         ]
     elif (ctx.attr.cpu == "freebsd"):
         tool_paths = [
-            tool_path(name = "ar", path = "/usr/bin/ar"),
+            tool_path(name = "ar", path = "/some/other/prefix/ar"),
             tool_path(name = "compat-ld", path = "/usr/bin/ld"),
             tool_path(name = "cpp", path = "/usr/bin/cpp"),
             tool_path(name = "dwp", path = "/usr/bin/dwp"),
@@ -1304,7 +1304,7 @@ def _impl(ctx):
         ]
     elif (ctx.attr.cpu == "local"):
         tool_paths = [
-            tool_path(name = "ar", path = "/usr/bin/ar"),
+            tool_path(name = "ar", path = "/yet/another/ar"),
             tool_path(name = "compat-ld", path = "/usr/bin/ld"),
             tool_path(name = "cpp", path = "/usr/bin/cpp"),
             tool_path(name = "dwp", path = "/usr/bin/dwp"),
