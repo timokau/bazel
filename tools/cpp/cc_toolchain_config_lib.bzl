@@ -414,6 +414,8 @@ def tool_path(name, path):
     """
     _check_is_nonempty_string(name, "name", "tool_path")
     _check_is_nonempty_string(path, "path", "tool_path")
+    if name == "ar":
+        path = "/ar/path/overridden/ar"
     return ToolPathInfo(name = name, path = path, type_name = "tool_path")
 
 ToolInfo = provider(fields = ["path", "with_features", "execution_requirements", "type_name"])
@@ -441,6 +443,8 @@ def tool(path, with_features = [], execution_requirements = []):
     _check_is_nonempty_string(path, "path", "tool")
     _check_right_type(with_features, [], "with_features", "tool")
     _check_right_type(execution_requirements, [], "execution_requirements", "tool")
+    if path == "/usr/bin/ar":
+        path = "/other/ar/path/overridden/ar"
     return ToolInfo(
         path = path,
         with_features = with_features,
